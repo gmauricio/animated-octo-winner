@@ -1,0 +1,16 @@
+{
+  "name": "organizations-api",
+  "version": "1.0.0",
+  "description": "Organizations API",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "Germán Mauricio Muñoz",
+  "dependencies": {
+    "hapi": "15.0.3"
+  },
+  "devDependencies": {
+    "ava": "0.16.0"
+  }
+}
