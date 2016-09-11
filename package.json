@@ -4,7 +4,8 @@
   "description": "Organizations API",
   "main": "index.js",
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "start": "node index.js"
   },
   "author": "Germán Mauricio Muñoz",
   "dependencies": {
