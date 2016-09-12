@@ -29,7 +29,6 @@ test('GET /echo responds with Echo!', async t => {
   t.is(response.result, 'Echo!');
 });
 
-
 test('POST /organizations returns saved organization and saves to db', async t => {
   const org = {
     name: 'Org 1.0',
@@ -55,4 +54,42 @@ test('POST /organizations returns saved organization and saves to db', async t =
   t.is(saved.url, org.url);
   t.is(saved.code, org.code);
   t.is(saved.type, org.type);
+});
+
+test('GET /organizations returns all saved organizations', async t => {
+  const orgs = [{
+    name: 'Super Employer',
+    description: 'An employer that is super',
+    url: 'http://superemployer.com',
+    code: '123xyz',
+    type: 'employer'
+  },{
+    name: 'iSure',
+    description: 'A sure organization',
+    url: 'http://isure.com',
+    code: '468abc',
+    type: 'insurance'
+  }]
+
+  await Organization.create(orgs)
+  
+  const options = {
+    method: "GET",
+    url: "/organizations"
+  };
+
+  t.plan(orgs.length * 6 + 3)
+  const response = await server.inject(options);
+  t.is(response.statusCode, 200);
+  t.true(Array.isArray(response.result));
+  t.is(response.result.length, 2)
+  
+  const results = response.result
+  orgs.forEach(_org => {
+    const org = results.find(result => result.name == _org.name)
+    t.truthy(org)
+    t.is(org.name, _org.name)
+    t.is(org.description, _org.description)
+    t.is(org.type, _org.type)
+  })
 });

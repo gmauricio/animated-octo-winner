@@ -20,6 +20,12 @@ server.route({
 });
 
 server.route({
+  method: 'GET',
+  path: '/organizations',
+  handler: organizations.list
+})
+
+server.route({
   method: 'POST',
   path: '/organizations',
   handler: organizations.create

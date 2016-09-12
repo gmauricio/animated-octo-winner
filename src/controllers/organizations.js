@@ -5,5 +5,10 @@ module.exports = {
     const organization = new Organization(request.payload);
     return organization.save()
       .then(saved => reply(saved.toObject()).code(201))
+  },
+
+  list(request, reply) {
+    return Organization.find()
+      .then(results => reply(results.map(org => org.toObject())))
   }
 }
