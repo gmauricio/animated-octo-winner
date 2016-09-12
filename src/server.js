@@ -1,6 +1,7 @@
 'use strict';
 
 const Hapi = require('hapi');
+const organizations = require('./controllers/organizations') 
 
 // Create a server with a host and port
 const server = new Hapi.Server();
@@ -12,10 +13,16 @@ server.connection({
 // Add the route
 server.route({
   method: 'GET',
-  path:'/echo', 
+  path: '/echo', 
   handler: (request, reply) => {
     return reply('Echo!');
   }
 });
+
+server.route({
+  method: 'POST',
+  path: '/organizations',
+  handler: organizations.create
+})
 
 module.exports = server;

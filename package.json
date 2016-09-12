@@ -9,9 +9,17 @@
   },
   "author": "Germán Mauricio Muñoz",
   "dependencies": {
-    "hapi": "15.0.3"
+    "babel-register": "6.14.0",
+    "hapi": "15.0.3",
+    "hapi-mongoose-db-connector": "2.1.3",
+    "immutable": "3.8.1",
+    "mongoose": "4.3.7"
   },
   "devDependencies": {
     "ava": "0.16.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gmauricio/animated-octo-winner.git"
   }
 }
