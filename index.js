@@ -1,11 +1,28 @@
 const server = require('./src/server');
+const Inert = require('inert');
+const Vision = require('vision');
+const HapiSwagger = require('hapi-swagger');
+const Pack = require('./package');
 
-server.register({
-  register: require('hapi-mongoose-db-connector'),
-  options: {
-    mongodbUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/organizations-api'
+server.register([
+  Inert,
+  Vision,
+  {
+    register: HapiSwagger,
+    options: { 
+      info: {
+        title: 'Organizations Test API Documentation',
+        version: Pack.version,
+      }
+    }
+  },
+  {
+    register: require('hapi-mongoose-db-connector'),
+    options: {
+      mongodbUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/organizations-api'
+    }
   }
-}, (err) => {
+], (err) => {
   if (err) {
     throw err; // something bad happened loading the plugin
   }

@@ -1,7 +1,8 @@
 'use strict';
 
 const Hapi = require('hapi');
-const organizations = require('./controllers/organizations') 
+const Joi = require('joi');
+const organizations = require('./controllers/organizations'); 
 
 // Create a server with a host and port
 const server = new Hapi.Server();
@@ -22,13 +23,41 @@ server.route({
 server.route({
   method: 'GET',
   path: '/organizations',
-  handler: organizations.list
+  handler: organizations.list,
+  config: {
+    tags: ['api'],
+    validate: {
+      query: {
+        code: Joi.string().description('the code of the organization'),
+        name: Joi.string().description('the name of the organization'),
+      }
+    }
+  }
 })
 
 server.route({
   method: 'POST',
   path: '/organizations',
-  handler: organizations.create
+  handler: organizations.create,
+  config: {
+    tags: ['api'],
+    validate: {
+      payload: {
+        name: Joi.string()
+          .required()
+          .description('the name of the organization'),
+        description: Joi.string().required()
+          .description('the description of the organization'),
+        url: Joi.string().required()
+          .description('the url of the organization'),
+        code: Joi.string().required()
+          .description('the code of the organization'),
+        type: Joi.string().required()
+          .valid(['employer', 'insurance', 'health system'])
+          .description('the type of the organization (employer, insurance, health system)'),
+      }
+    }
+  }
 })
 
 module.exports = server;
