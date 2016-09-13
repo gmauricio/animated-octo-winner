@@ -3,6 +3,20 @@ import server from '../src/server'
 import mongoose from 'mongoose';
 import Organization from '../src/models/organization';
 
+const orgs = [{
+  name: 'Super Employer',
+  description: 'An employer that is super',
+  url: 'http://superemployer.com',
+  code: '123xyz',
+  type: 'employer'
+},{
+  name: 'iSure',
+  description: 'A sure organization',
+  url: 'http://isure.com',
+  code: '468abc',
+  type: 'insurance'
+}]
+
 test.before(t => {
   return server.register({
     register: require('hapi-mongoose-db-connector'),
@@ -56,21 +70,7 @@ test('POST /organizations returns saved organization and saves to db', async t =
   t.is(saved.type, org.type);
 });
 
-test('GET /organizations returns all saved organizations', async t => {
-  const orgs = [{
-    name: 'Super Employer',
-    description: 'An employer that is super',
-    url: 'http://superemployer.com',
-    code: '123xyz',
-    type: 'employer'
-  },{
-    name: 'iSure',
-    description: 'A sure organization',
-    url: 'http://isure.com',
-    code: '468abc',
-    type: 'insurance'
-  }]
-
+test.serial('GET /organizations returns all saved organizations without code and url', async t => {
   await Organization.create(orgs)
   
   const options = {
@@ -82,7 +82,7 @@ test('GET /organizations returns all saved organizations', async t => {
   const response = await server.inject(options);
   t.is(response.statusCode, 200);
   t.true(Array.isArray(response.result));
-  t.is(response.result.length, 2)
+  t.is(response.result.length, 2);
   
   const results = response.result
   orgs.forEach(_org => {
@@ -91,5 +91,29 @@ test('GET /organizations returns all saved organizations', async t => {
     t.is(org.name, _org.name)
     t.is(org.description, _org.description)
     t.is(org.type, _org.type)
+    t.false(org.hasOwnProperty('code'))
+    t.false(org.hasOwnProperty('url'))
   })
+});
+
+test.serial('GET /organizations filtered by code return results with code and url', async t => {
+  await Organization.create(orgs)
+  
+  const options = {
+    method: "GET",
+    url: "/organizations?code=123xyz"
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 200);
+  t.true(Array.isArray(response.result));
+  t.is(response.result.length, 1);
+  
+  const results = response.result;
+  const org = results[0];
+  t.is(org.code, orgs[0].code);
+  t.is(org.url, orgs[0].url);
+  t.is(org.name, orgs[0].name);
+  t.is(org.description, orgs[0].description);
+  t.is(org.type, orgs[0].type);
 });
