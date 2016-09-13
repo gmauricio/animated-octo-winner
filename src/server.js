@@ -35,6 +35,21 @@ server.route({
   }
 })
 
+const organizationSchema = {
+  name: Joi.string()
+    .required()
+    .description('the name of the organization'),
+  description: Joi.string().required()
+    .description('the description of the organization'),
+  url: Joi.string().required()
+    .description('the url of the organization'),
+  code: Joi.string().required()
+    .description('the code of the organization'),
+  type: Joi.string().required()
+    .valid(['employer', 'insurance', 'health system'])
+    .description('the type of the organization (employer, insurance, health system)'),
+}
+
 server.route({
   method: 'POST',
   path: '/organizations',
@@ -42,20 +57,19 @@ server.route({
   config: {
     tags: ['api'],
     validate: {
-      payload: {
-        name: Joi.string()
-          .required()
-          .description('the name of the organization'),
-        description: Joi.string().required()
-          .description('the description of the organization'),
-        url: Joi.string().required()
-          .description('the url of the organization'),
-        code: Joi.string().required()
-          .description('the code of the organization'),
-        type: Joi.string().required()
-          .valid(['employer', 'insurance', 'health system'])
-          .description('the type of the organization (employer, insurance, health system)'),
-      }
+      payload: organizationSchema
+    }
+  }
+})
+
+server.route({
+  method: 'PUT',
+  path: '/organizations',
+  handler: organizations.update,
+  config: {
+    tags: ['api'],
+    validate: {
+      payload: organizationSchema
     }
   }
 })

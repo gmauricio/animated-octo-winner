@@ -117,3 +117,47 @@ test.serial('GET /organizations filtered by code return results with code and ur
   t.is(org.description, orgs[0].description);
   t.is(org.type, orgs[0].type);
 });
+
+test.serial('PUT /organizations updates saved organization', async t => {
+  await Organization.create(orgs)
+
+  const newOrg = Object.assign({}, orgs[0], {
+    name: 'Super Duper'
+  });
+  
+  const options = {
+    method: "PUT",
+    url: "/organizations",
+    payload: newOrg 
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 200);
+  t.deepEqual(response.result, newOrg);
+
+  const saved = await Organization.findOne({ code: newOrg.code });
+  t.is(saved.name, newOrg.name);
+  t.is(saved.description, orgs[0].description);
+  t.is(saved.url, orgs[0].url);
+  t.is(saved.code, orgs[0].code);
+  t.is(saved.type, orgs[0].type);
+});
+
+test('PUT /organizations of not existent organization returns 404', async t => {
+  const org = {
+    name: 'Super Employer',
+    description: 'An employer that is super',
+    url: 'http://superemployer.com',
+    code: 'invalidCode',
+    type: 'employer'
+  }
+  
+  const options = {
+    method: "PUT",
+    url: "/organizations",
+    payload: org 
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 404);
+});
