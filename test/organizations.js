@@ -161,3 +161,19 @@ test('PUT /organizations of not existent organization returns 404', async t => {
   const response = await server.inject(options);
   t.is(response.statusCode, 404);
 });
+
+
+test.serial('DELETE /organizations/{code} deletes organization from db', async t => {
+  await Organization.create(orgs)
+ 
+  const options = {
+    method: "DELETE",
+    url: "/organizations/" + orgs[0].code,
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 200);
+
+  const saved = await Organization.findOne({ code: orgs[0].code });
+  t.falsy(saved);
+});

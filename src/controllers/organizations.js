@@ -24,5 +24,12 @@ module.exports = {
     const exclude = req.query.hasOwnProperty('code') ? [] : ['code', 'url'];
     return Organization.find(req.query)
       .then(results => reply(results.map(org => org.toJSON({ exclude }))))
+  },
+
+  remove(req, reply) {
+    Organization.remove({ code:req.params.code }, (err) => {
+      if (err) throw err;
+      reply();
+    })
   }
 }

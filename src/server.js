@@ -33,7 +33,7 @@ server.route({
       }
     }
   }
-})
+});
 
 const organizationSchema = {
   name: Joi.string()
@@ -48,7 +48,7 @@ const organizationSchema = {
   type: Joi.string().required()
     .valid(['employer', 'insurance', 'health system'])
     .description('the type of the organization (employer, insurance, health system)'),
-}
+};
 
 server.route({
   method: 'POST',
@@ -60,7 +60,7 @@ server.route({
       payload: organizationSchema
     }
   }
-})
+});
 
 server.route({
   method: 'PUT',
@@ -70,6 +70,20 @@ server.route({
     tags: ['api'],
     validate: {
       payload: organizationSchema
+    }
+  }
+});
+
+server.route({
+  method: 'DELETE',
+  path: '/organizations/{code}',
+  handler: organizations.remove,
+  config: {
+    tags: ['api'],
+    validate: {
+      params: {
+        code: Joi.string().required().description('the code of the organization'),
+      }
     }
   }
 })
