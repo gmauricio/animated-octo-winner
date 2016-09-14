@@ -9,7 +9,8 @@ server.register([
   Vision,
   {
     register: HapiSwagger,
-    options: { 
+    options: {
+      host: process.env.HOST || 'localhost:8000', 
       info: {
         title: 'Organizations Test API Documentation',
         version: Pack.version,
