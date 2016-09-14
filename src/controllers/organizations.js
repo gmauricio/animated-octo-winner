@@ -45,9 +45,8 @@ module.exports = {
   },
 
   remove(req, reply) {
-    Organization.remove({ code:req.params.code }, (err) => {
-      if (err) throw err;
-      reply();
-    })
+    Organization.remove({ code:req.params.code }).exec().then(() => {
+      reply()
+    }).catch(err => reply(Boom.badImplementation(err)))
   }
 }

@@ -4,6 +4,8 @@ const Hapi = require('hapi');
 const Joi = require('joi');
 const organizations = require('./controllers/organizations'); 
 
+require('mongoose').Promise = global.Promise;
+
 // Create a server with a host and port
 const server = new Hapi.Server();
 server.connection({ 
