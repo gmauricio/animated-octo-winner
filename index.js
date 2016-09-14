@@ -21,6 +21,15 @@ server.register([
     options: {
       mongodbUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/organizations-api'
     }
+  },
+  {
+    register: require('./src/plugins/search'),
+    options: {
+      config: {
+        host: process.env.BONSAI_URL || 'http://localhost:9200',
+      },
+      index: 'organizations'
+    }
   }
 ], (err) => {
   if (err) {

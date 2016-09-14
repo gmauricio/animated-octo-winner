@@ -1,13 +1,13 @@
 const elasticsearch = require('elasticsearch');
 
-const client = new elasticsearch.Client( {  
+const client = new elasticsearch.Client({  
   host: process.env.BONSAI_URL || 'http://localhost:9200'
 });
 
 module.exports = function(indexName) {
   client.indices.exists({ index: indexName }).then(exists => {
     if (!exists) {
-      client.indices.create({ index });
+      client.indices.create({ index, refresh: true });
     }
   });
 

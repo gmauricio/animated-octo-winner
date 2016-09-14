@@ -18,17 +18,23 @@ const orgs = [{
 }]
 
 test.before(t => {
-  return server.register({
+  return server.register([{
     register: require('hapi-mongoose-db-connector'),
     options: {
       mongodbUrl: 'mongodb://localhost:27017/organizations-api-test'
     }
-  }).then(() => Organization.remove({}))
+  },{
+    register: require('../src/plugins/search'),
+    options: {
+      config: { host: 'http://localhost:9200' },
+      index: 'organizations-test'
+    }
+  }])
 })
 
-test.afterEach.always(t => {
+test.beforeEach(t => {
   return Organization.remove({})
-});
+})
 
 test('GET /echo responds with Echo!', async t => {
   t.plan(2);
@@ -43,7 +49,7 @@ test('GET /echo responds with Echo!', async t => {
   t.is(response.result, 'Echo!');
 });
 
-test('POST /organizations returns saved organization and saves to db', async t => {
+test.serial('POST /organizations returns saved organization and saves to db', async t => {
   const org = {
     name: 'Org 1.0',
     description: 'An organization',
@@ -143,7 +149,7 @@ test.serial('PUT /organizations updates saved organization', async t => {
   t.is(saved.type, orgs[0].type);
 });
 
-test('PUT /organizations of not existent organization returns 404', async t => {
+test.serial('PUT /organizations of not existent organization returns 404', async t => {
   const org = {
     name: 'Super Employer',
     description: 'An employer that is super',
