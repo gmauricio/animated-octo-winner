@@ -31,6 +31,14 @@ server.register([
       },
       index: 'organizations'
     }
+  },
+  {
+    register: require('hapi-api-version'),
+    options: {
+      validVersions: [1, 2],
+      defaultVersion: 1,
+      vendorName: 'organizations-api'
+    }
   }
 ], (err) => {
   if (err) {

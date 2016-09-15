@@ -23,6 +23,14 @@ server.route({
 });
 
 server.route({
+    method: 'GET',
+    path: '/status',
+    handler: (request, reply) => {
+      reply({ version: request.pre.apiVersion });
+    }
+});
+
+server.route({
   method: 'GET',
   path: '/organizations',
   handler: organizations.list,
