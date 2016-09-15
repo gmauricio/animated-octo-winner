@@ -52,7 +52,8 @@ server.register([
       vendorName: 'organizations-api'
     }
   },
-  { register: require('./src/organizations') }
+  { register: require('./src/organizations') },
+  { register: require('./src/auth') }
 ], (err) => {
   if (err) {
     throw err; // something bad happened loading the plugin

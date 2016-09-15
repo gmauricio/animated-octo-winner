@@ -1,4 +1,4 @@
-const schema = require('./schema');
+const scheme = require('./scheme');
 const handlers = require('./handlers');
 const Joi = require('joi'); 
 
@@ -42,7 +42,7 @@ module.exports.register = (server, options, next) => {
     config: {
       tags: ['api'],
       validate: {
-        payload: schema
+        payload: scheme
       }
     }
   });
@@ -54,7 +54,7 @@ module.exports.register = (server, options, next) => {
     config: {
       tags: ['api'],
       validate: {
-        payload: schema
+        payload: scheme
       }
     }
   });
