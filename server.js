@@ -9,8 +9,20 @@ const Pack = require('./package');
 
 require('mongoose').Promise = global.Promise;
 
+const redisConfig = require("redis-url").parse(process.env.REDIS_URL || 'redis://127.0.0.1');
 // Create a server with a host and port
-const server = new Hapi.Server();
+const server = new Hapi.Server({
+  cache: [
+    {
+      name: 'redisCache',
+      engine: require('catbox-redis'),
+      host: redisConfig.hostname,
+      port: redisConfig.port,
+      password: redisConfig.password,
+      partition: 'cache'
+    }
+  ]
+});
 server.connection({ 
   host: '0.0.0.0', 
   port: process.env.PORT || 8000 
@@ -62,6 +74,7 @@ server.register([
   // Start the server
   server.start((err) => {
     if (err) {
+      console.log('Error starting server', err);
       throw err;
     }
     console.log('Server running at:', server.info.uri);
