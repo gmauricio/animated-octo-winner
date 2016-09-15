@@ -1,15 +1,23 @@
+import Hapi from 'hapi';
 import test from 'ava';
-import server from '../src/server'
+
+const server = new Hapi.Server();
+server.connection({ 
+  host: '0.0.0.0', 
+  port: 8000 
+});
 
 test.before(t => {
-  return server.register({
+  return server.register([{
+    register: require('../src/organizations')
+  },{
     register: require('hapi-api-version'),
     options: {
       validVersions: [1, 2],
       defaultVersion: 1,
       vendorName: 'organizations'
     }
-  })
+  }])
 })
 
 test('GET /status returns version 1 by default', async t => {

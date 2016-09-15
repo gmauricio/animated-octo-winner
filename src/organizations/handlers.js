@@ -1,5 +1,5 @@
 const Boom = require('boom');
-const Organization = require('../models/organization');
+const Organization = require('./model');
 const Map = require('immutable').Map;
 
 module.exports = {

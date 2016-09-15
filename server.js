@@ -1,8 +1,20 @@
-const server = require('./src/server');
+'use strict';
+
+const Hapi = require('hapi');
+const Joi = require('joi');
 const Inert = require('inert');
 const Vision = require('vision');
 const HapiSwagger = require('hapi-swagger');
 const Pack = require('./package');
+
+require('mongoose').Promise = global.Promise;
+
+// Create a server with a host and port
+const server = new Hapi.Server();
+server.connection({ 
+  host: '0.0.0.0', 
+  port: process.env.PORT || 8000 
+});
 
 server.register([
   Inert,
@@ -24,7 +36,7 @@ server.register([
     }
   },
   {
-    register: require('./src/plugins/search'),
+    register: require('./src/search'),
     options: {
       config: {
         host: process.env.BONSAI_URL || 'http://localhost:9200',
@@ -39,7 +51,8 @@ server.register([
       defaultVersion: 1,
       vendorName: 'organizations-api'
     }
-  }
+  },
+  { register: require('./src/organizations') }
 ], (err) => {
   if (err) {
     throw err; // something bad happened loading the plugin

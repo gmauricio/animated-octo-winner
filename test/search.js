@@ -1,12 +1,20 @@
+import Hapi from 'hapi';
 import test from 'ava';
-import server from '../src/server'
+
+const server = new Hapi.Server();
+server.connection({ 
+  host: '0.0.0.0', 
+  port: 8000 
+});
 
 let elasticSearch;
 const indexName = 'organizations-test'
 
 test.before(t => {
   return server.register([{
-    register: require('../src/plugins/search'),
+    register: require('../src/organizations')
+  },{
+    register: require('../src/search'),
     options: {
       config: { host: 'http://localhost:9200' },
       index: indexName

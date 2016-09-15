@@ -39,9 +39,10 @@ module.exports.register = (server, options, next) => {
   //Create index if it doesn't exist
   client.indices.exists({ index: options.index }).then(exists => {
     if (!exists) {
-      client.indices.create({ index });
+      client.indices.create({ index, refresh: true }).then(() => next());
+    } else {
+      next();
     }
-    next();
   });
 }
 

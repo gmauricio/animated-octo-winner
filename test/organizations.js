@@ -1,7 +1,14 @@
+import Hapi from 'hapi';
 import test from 'ava';
-import server from '../src/server'
 import mongoose from 'mongoose';
-import Organization from '../src/models/organization';
+import Organization from '../src/organizations/model';
+mongoose.Promise = global.Promise;
+
+const server = new Hapi.Server();
+server.connection({ 
+  host: '0.0.0.0', 
+  port: 8000 
+});
 
 const orgs = [{
   name: 'Super Employer',
@@ -19,12 +26,14 @@ const orgs = [{
 
 test.before(t => {
   return server.register([{
+    register: require('../src/organizations')
+  },{
     register: require('hapi-mongoose-db-connector'),
     options: {
       mongodbUrl: 'mongodb://localhost:27017/organizations-api-test'
     }
   },{
-    register: require('../src/plugins/search'),
+    register: require('../src/search'),
     options: {
       config: { host: 'http://localhost:9200' },
       index: 'organizations-test'
