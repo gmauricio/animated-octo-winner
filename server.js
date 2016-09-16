@@ -61,7 +61,7 @@ server.register([
     options: {
       validVersions: [1, 2],
       defaultVersion: 1,
-      vendorName: 'organizations-api'
+      vendorName: 'organizations'
     }
   },
   { register: require('./src/organizations') },
