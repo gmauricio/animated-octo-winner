@@ -34,7 +34,7 @@ Check [https://hapi-organizations.herokuapp.com/documentation](https://hapi-orga
 - Ava, for testing.
 - Redis to cache searches
 
-## Archictecture
+## Architecture
 
 All logic is divided into Hapi plugins, there are 3 plugins:
 
