@@ -8,7 +8,7 @@ There is a demo deployed to Heroku at https://hapi-organizations.herokuapp.com.
 ## Features
 
 - Get, create, update and delete Organization resource, where Organizations have the following properties:
-  * name
+  * name (used as an identifer for the organization, when doing and update or delete)
   * description
   * url
   * code
@@ -32,6 +32,7 @@ Check [https://hapi-organizations.herokuapp.com/documentation](https://hapi-orga
 - Elastic Search, for text searches.
 - Swagger, To generate docs
 - Ava, for testing.
+- Redis to cache searches
 
 ## Archictecture
 
@@ -40,6 +41,50 @@ All logic is divided into Hapi plugins, there are 3 plugins:
 - organizations: API to manage Organization resources.
 - auth: auth API and authentication logic with JWT
 - search: handles connection and queries to elastic search
+
+Each plugin is contained within is own folder.
+
+### Some implementation details
+
+#### Organizations plugin
+
+The folder for this plugin contains the following files:
+
+- index.js: Entrypoint for plugin
+- handlers.js: Exports handlers for each route implemented by the plugin, analog to a controller in other framework, which should be really thin, and delegate logic to services.
+- model.js: Implements the Db model to represent database organizations collection and document schema.
+- scheme.js: Joi scheme to represent and validate organizations, for payloads ans responses.
+- service.js: Implements Organization business logic, as finding, creating and updating resources.  
+
+#### Authentication with JWT
+
+There are currently no secured routes, just two services to show JWT iaction
+
+- POST /auth with credentials to obtain a token
+- GET /auth/me providing the token in the Authorization header to show user information
+
+#### Versioning
+
+There is only one default version for all services, but there is an additional status service to show how versioning works
+
+- GET /status with no header to check whats the current default version
+- GET /status providing a version in the header to see how it detects the version. (i.e `Accept: 'application/vnd.organizations.v2+json'`)
+
+check [test/status.js](https://github.com/gmauricio/hapi-organizations/blob/master/test/status.js) for more details
+
+#### Search
+
+Search works when trying to get organizations filtered by name. 
+
+Example: GET /organizations?name=part%20of%20name 
+
+#### Caching
+
+Hapi catbox was used to implement caching with Redis. Only one route works with cache:
+
+GET /organizations
+
+The query params are used to generate the cache object key.
 
 ## Testing
 
