@@ -61,7 +61,11 @@ module.exports.register = (server, options, next) => {
     handler: handlers.create,
     config: {
       tags: ['api'],
+      auth: 'jwt',
       validate: {
+        headers: Joi.object().keys({
+            Authorization: Joi.string().description('JWT Authorization token'),
+          }).unknown(),
         payload: scheme
       }
     }
@@ -73,7 +77,11 @@ module.exports.register = (server, options, next) => {
     handler: handlers.update,
     config: {
       tags: ['api'],
+      auth: 'jwt',
       validate: {
+        headers: Joi.object().keys({
+            Authorization: Joi.string().description('JWT Authorization token'),
+          }).unknown(),
         payload: scheme
       }
     }
@@ -85,7 +93,11 @@ module.exports.register = (server, options, next) => {
     handler: handlers.remove,
     config: {
       tags: ['api'],
+      auth: 'jwt',
       validate: {
+        headers: Joi.object().keys({
+            Authorization: Joi.string().description('JWT Authorization token'),
+          }).unknown(),
         params: {
           code: Joi.string().required().description('the code of the organization'),
         }

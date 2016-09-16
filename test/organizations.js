@@ -1,5 +1,6 @@
 import Hapi from 'hapi';
 import test from 'ava';
+import JWT from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import Organization from '../src/organizations/model';
 mongoose.Promise = global.Promise;
@@ -30,8 +31,14 @@ const orgs = [{
   type: 'insurance'
 }]
 
+const secretKey = 'ThisIsSupposedToBeAVerySecretKey';
+let token;
+
 test.before(t => {
-  return server.register([{
+  return server.register([{ 
+    register: require('../src/auth'),
+    options: { secretKey }
+  },{
     register: require('../src/organizations')
   },{
     register: require('hapi-mongoose-db-connector'),
@@ -44,7 +51,11 @@ test.before(t => {
       config: { host: 'http://localhost:9200' },
       index: 'organizations-test'
     }
-  }])
+  }]).then(() => {
+    token = JWT.sign({
+      role: 'admin',
+    }, secretKey);
+  })
 })
 
 test.beforeEach(t => {
@@ -76,7 +87,10 @@ test.serial('POST /organizations returns saved organization and saves to db', as
   const options = {
     method: "POST",
     url: "/organizations",
-    payload: org 
+    payload: org,
+    headers: {
+      Authorization: token
+    }
   };
 
   const response = await server.inject(options);
@@ -89,6 +103,25 @@ test.serial('POST /organizations returns saved organization and saves to db', as
   t.is(saved.url, org.url);
   t.is(saved.code, org.code);
   t.is(saved.type, org.type);
+});
+
+test.serial('POST /organizations returns 401 if auth token is not present', async t => {
+  const org = {
+    name: 'Org 1.0',
+    description: 'An organization',
+    url: 'http://organization.com',
+    code: '123xyz',
+    type: 'employer'
+  } 
+  
+  const options = {
+    method: "POST",
+    url: "/organizations",
+    payload: org,
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 401);
 });
 
 test.serial('GET /organizations returns all saved organizations without code and url', async t => {
@@ -149,7 +182,10 @@ test.serial('PUT /organizations updates saved organization', async t => {
   const options = {
     method: "PUT",
     url: "/organizations",
-    payload: newOrg 
+    payload: newOrg,
+    headers: {
+      Authorization: token
+    }
   };
 
   const response = await server.inject(options);
@@ -176,11 +212,33 @@ test.serial('PUT /organizations of not existent organization returns 404', async
   const options = {
     method: "PUT",
     url: "/organizations",
-    payload: org 
+    payload: org,
+    headers: {
+      Authorization: token
+    }
   };
 
   const response = await server.inject(options);
   t.is(response.statusCode, 404);
+});
+
+test.serial('PUT /organizations returns 401 if auth token is not present', async t => {
+  const org = {
+    name: 'Super Employer',
+    description: 'An employer that is super',
+    url: 'http://superemployer.com',
+    code: 'invalidCode',
+    type: 'employer'
+  }
+  
+  const options = {
+    method: "PUT",
+    url: "/organizations",
+    payload: org,
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 401);
 });
 
 
@@ -190,6 +248,9 @@ test.serial('DELETE /organizations/{code} deletes organization from db', async t
   const options = {
     method: "DELETE",
     url: "/organizations/" + orgs[0].code,
+    headers: {
+      Authorization: token
+    }
   };
 
   const response = await server.inject(options);
@@ -197,4 +258,16 @@ test.serial('DELETE /organizations/{code} deletes organization from db', async t
 
   const saved = await Organization.findOne({ code: orgs[0].code });
   t.falsy(saved);
+});
+
+test.serial('DELETE /organizations/{code} returns 401 if auth token is not present', async t => {
+  await Organization.create(orgs)
+ 
+  const options = {
+    method: "DELETE",
+    url: "/organizations/" + orgs[0].code,
+  };
+
+  const response = await server.inject(options);
+  t.is(response.statusCode, 401);
 });

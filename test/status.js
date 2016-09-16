@@ -14,7 +14,9 @@ server.connection({
 });
 
 test.before(t => {
-  return server.register([{
+  return server.register([{ 
+    register: require('../src/auth') 
+  },{
     register: require('../src/organizations')
   },{
     register: require('hapi-api-version'),

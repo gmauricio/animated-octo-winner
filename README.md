@@ -58,10 +58,12 @@ The folder for this plugin contains the following files:
 
 #### Authentication with JWT
 
-There are currently no secured routes, just two services to show JWT iaction
+Creating, updating and deleting organizations operations are secured.
+
+There are two services associated with authentication, to get a token and to check the token:
 
 - POST /auth with credentials to obtain a token
-- GET /auth/me providing the token in the Authorization header to show user information
+- GET /auth/me with a token in the Authorization header to check authentication and get user information
 
 #### Versioning
 

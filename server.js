@@ -47,6 +47,12 @@ server.register([
       mongodbUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/organizations-api'
     }
   },
+  { 
+    register: require('./src/auth'),
+    options: {
+      secretKey: process.env.JWT_SECRET_KEY || 'ThisIsSupposedToBeAVerySecretKey'
+    } 
+  },
   {
     register: require('./src/search'),
     options: {
@@ -64,8 +70,7 @@ server.register([
       vendorName: 'organizations'
     }
   },
-  { register: require('./src/organizations') },
-  { register: require('./src/auth') }
+  { register: require('./src/organizations') }
 ], (err) => {
   if (err) {
     throw err; // something bad happened loading the plugin
