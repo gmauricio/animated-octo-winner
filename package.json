@@ -22,6 +22,7 @@
     "joi": "9.0.4",
     "jsonwebtoken": "7.1.9",
     "mongoose": "4.3.7",
+    "query-string": "4.2.3",
     "redis-url": "1.2.1",
     "vision": "4.1.0"
   },

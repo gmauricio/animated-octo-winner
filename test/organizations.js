@@ -4,7 +4,13 @@ import mongoose from 'mongoose';
 import Organization from '../src/organizations/model';
 mongoose.Promise = global.Promise;
 
-const server = new Hapi.Server();
+const server = new Hapi.Server({
+  cache: {
+    name: 'redisCache',
+    engine: require('catbox-redis'),
+    partition: 'cache'
+  }
+});
 server.connection({ 
   host: '0.0.0.0', 
   port: 8000 

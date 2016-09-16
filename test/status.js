@@ -1,7 +1,13 @@
 import Hapi from 'hapi';
 import test from 'ava';
 
-const server = new Hapi.Server();
+const server = new Hapi.Server({
+  cache: {
+    name: 'redisCache',
+    engine: require('catbox-redis'),
+    partition: 'cache'
+  }
+});
 server.connection({ 
   host: '0.0.0.0', 
   port: 8000 

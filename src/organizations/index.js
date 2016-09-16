@@ -1,8 +1,28 @@
 const scheme = require('./scheme');
 const handlers = require('./handlers');
-const Joi = require('joi'); 
+const Joi = require('joi');
+const queryString = require('query-string');
+const OrganizationService = require('./service');
 
 module.exports.register = (server, options, next) => {
+
+  const findOrganizations = function (query, next) {
+    return OrganizationService(server.app.searchClient).find(query)
+      .then(results => next(null, results))
+      .catch(err => next(err))
+  };
+
+  server.method('findOrganizations', findOrganizations, {
+    cache: {
+      cache: 'redisCache',
+      expiresIn: 30 * 1000,
+      generateTimeout: 1000
+    },
+    generateKey: function (query) {
+      return queryString.stringify(query);
+    }
+  });
+
   // Add the route
   server.route({
     method: 'GET',
