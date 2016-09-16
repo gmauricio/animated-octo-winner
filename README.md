@@ -24,6 +24,7 @@ Check [https://hapi-organizations.herokuapp.com/documentation](https://hapi-orga
 - Versioning support
 - Search using Elastic Search
 - Swagger generated documentation
+- Caching layer with Redis
 
 ## Some techonologies and libraries used
 
