@@ -12,20 +12,14 @@ module.exports = {
   },
 
   update(req, reply) {
-    const conditions = { code: req.payload.code }
-    Organization.findOneAndUpdate(conditions, req.payload, {new: true}, (err, org) => {
-      if (err) reply(Boom.badImplementation(err))
-
-      if (org) {
-        req.server.app.searchClient.addDocument('organization', org.code, org.toJSON())
-          .then(() => {
-            reply(org.toJSON())
-          })
-          .catch(err => reply(Boom.badImplementation(err)))
-      } else {
-        reply().code(404)
-      }
-    })
+    OrganizationService(req.server.app.searchClient).update(req.payload)
+      .then(organization => {
+        if (organization) {
+          return reply(organization)
+        }
+        reply().code(404);
+      })
+      .catch(err => reply(Boom.badImplementation(err)))
   },
   
   list(req, reply) {

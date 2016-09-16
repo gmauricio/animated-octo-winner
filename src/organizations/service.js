@@ -20,5 +20,16 @@ module.exports = searchClient => ({
         searchClient.addDocument('organization', saved.code, saved.toJSON())
           .then(() => saved.toJSON())
       )
-  }
+  },
+
+  update: organization => 
+    Organization.findOneAndUpdate({ code: organization.code }, organization, {new: true}).exec()
+      .then(org => {
+        if (org) {
+          return searchClient.addDocument('organization', org.code, org.toJSON())
+            .then(() => org.toJSON())
+        } else {
+          return null;
+        }
+      })
 })
